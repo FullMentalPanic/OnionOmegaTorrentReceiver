@@ -1,0 +1,12 @@
+email:
+  imp4ssl: imap.gmail.com
+  port   : 993
+  account: xxxxxxxxx@gmail.com
+  password: xxxxxxxxxxxxxx
+  white_list:
+    - xxxxxxxxxxxxxxxxxx
+
+transmission:
+  dowload_dir: /tmp/mounts/USB-A1/download
+  account: transmission
+  password: transmission
