@@ -1,9 +1,9 @@
 import imaplib2
 from threading import *
 from Queue import Queue
-import subprocess
-
-transmission = '/usr/bin/transmission-remote'
+#import subprocess
+import transmission as tran
+#transmission = '/usr/bin/transmission-remote'
 
 
 class Downloader(object):
@@ -28,12 +28,12 @@ class Downloader(object):
 
     def processor(self):
         while True:
-            url = self.queue.get(True)
-            print url
+            url = self.queue.get()
+            #print url
             if url is None:
                 break
             else:
-                subprocess.call([transmission, '--add', url])
+                tran.Add_Torrent(url)
             self.queue.task_done()
         self.queue.task_done()
         return

@@ -3,6 +3,9 @@ from downloader import Downloader
 import imaplib2
 import time
 import yaml
+import sys
+import error as err
+import transmission as tran
 
 class TorrentReceiver(object):
     def __init__(self):
@@ -18,20 +21,20 @@ class TorrentReceiver(object):
 
     def run(self):
         M = self.login(self.mail['imp4ssl'], self.mail['port'], self.mail['account'], self.mail['password'])
-        self.worker = Downloader()
-        self.workqueue = self.worker.start()
-        self.Receiver = Listener(self.workqueue, self.mail['white_list'])
+        self.Worker = Downloader()
+        self.Workqueue = self.Worker.start()
+        self.Receiver = Listener(self.Workqueue, self.mail['white_list'])
         self.Receiver.start(M)
 
     def close(self):
         self.Receiver.close()
-        self.worker.close()
+        self.Worker.close()
         self.M.close()
         self.M.logout()
 
     def __del__(self):
         self.Receiver.close()
-        self.worker.close()
+        self.Worker.close()
         self.M.close()
         self.M.logout()
 
@@ -41,8 +44,9 @@ if __name__ == '__main__':
         a= TorrentReceiver()
         a.run()
         while True:
+            tran.List_Torrent()
             time.sleep(10)
     except:
         a.close()
     finally:
-        a.close()
+        sys.exit()
