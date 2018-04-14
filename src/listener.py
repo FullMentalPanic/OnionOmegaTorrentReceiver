@@ -12,8 +12,14 @@ class Listener(object):
         self.queue = queue
         self.white_list = white_list
 
-    def start(self, Mail):
-        self.M = Mail
+    def login(self,imp4ssl,port,account,pwd):
+        M = imaplib2.IMAP4_SSL(imp4ssl,int(port))
+        M.login(account,pwd)
+        M.select("INBOX")
+        return M
+
+    def start(self, imp4ssl, port, account, pwd):
+        self.M = self.login(imp4ssl, port, account, pwd)
         self.thread.start()
 
     def stop(self):
@@ -50,7 +56,7 @@ class Listener(object):
                 msg = email.message_from_string(response_part[1])
                 if msg['from'] not in self.white_list:
                     #print msg['subject']
-                    #print msg['from']
+                    print msg['from']
                     break
 
                 if msg.is_multipart():
@@ -80,8 +86,12 @@ class Listener(object):
     def close(self):
         self.stop()
         self.join()
+        self.M.close()
+        self.M.logout()
 
 
     def __del__(self):
         self.stop()
         self.join()
+        self.M.close()
+        self.M.logout()

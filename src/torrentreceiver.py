@@ -13,30 +13,20 @@ class TorrentReceiver(object):
             cfg = yaml.load(ymlfile)
         self.mail = cfg['email']
 
-    def login(self,imp4ssl,port,account,pwd):
-        M = imaplib2.IMAP4_SSL(imp4ssl,int(port))
-        M.login(account,pwd)
-        M.select("INBOX")
-        return M
-
     def run(self):
-        M = self.login(self.mail['imp4ssl'], self.mail['port'], self.mail['account'], self.mail['password'])
         self.Worker = Downloader()
         self.Workqueue = self.Worker.start()
         self.Receiver = Listener(self.Workqueue, self.mail['white_list'])
-        self.Receiver.start(M)
+        self.Receiver.start(self.mail['imp4ssl'], self.mail['port'], self.mail['account'], self.mail['password'])
 
     def close(self):
         self.Receiver.close()
         self.Worker.close()
-        self.M.close()
-        self.M.logout()
+
 
     def __del__(self):
         self.Receiver.close()
         self.Worker.close()
-        self.M.close()
-        self.M.logout()
 
 
 if __name__ == '__main__':
@@ -45,7 +35,7 @@ if __name__ == '__main__':
         a.run()
         while True:
             tran.List_Torrent()
-            time.sleep(10)
+            time.sleep(100)
     except:
         a.close()
     finally:
