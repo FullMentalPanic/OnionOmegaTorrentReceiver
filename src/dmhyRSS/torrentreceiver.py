@@ -1,11 +1,12 @@
 from listener import Listener
 from downloader import Downloader
-import imaplib2
-import time
 import yaml
-import sys
 import error as err
-import transmission as tran
+import subprocess
+import time
+import os
+from pathlib import Path
+
 
 class TorrentReceiver(object):
     def __init__(self):
@@ -19,6 +20,24 @@ class TorrentReceiver(object):
         self.Receiver = Listener(self.Workqueue, self.mail['white_list'])
         self.Receiver.start(self.mail['imp4ssl'], self.mail['port'], self.mail['account'], self.mail['password'])
 
+    def spider(self):
+        subprocess.check_output(['scrapy', 'crawl', 'dmhy_rss'])
+        path = '/dmhy_rss_magnet.txt'
+        cwd = os.getcwd()+path
+        #print cwd
+
+        if Path(cwd).exists():
+            #print "to do list"
+            f = open(cwd)
+            for magnet in f:
+                self.Workqueue.put(magnet)
+            f.close()
+            os.remove(cwd)
+        else:
+            #print " no to do list"
+            pass
+
+
     def close(self):
         self.Receiver.close()
         self.Worker.close()
@@ -27,16 +46,3 @@ class TorrentReceiver(object):
     def __del__(self):
         self.Receiver.close()
         self.Worker.close()
-
-
-if __name__ == '__main__':
-    try:
-        a= TorrentReceiver()
-        a.run()
-        while True:
-            tran.List_Torrent()
-            time.sleep(100)
-    except:
-        a.close()
-    finally:
-        sys.exit()

@@ -15,7 +15,7 @@ class Listener(object):
     def login(self,imp4ssl,port,account,pwd):
         M = imaplib2.IMAP4_SSL(imp4ssl,int(port))
         M.login(account,pwd)
-        M.select("INBOX")
+        M.select("inbox")
         return M
 
     def start(self, imp4ssl, port, account, pwd):

@@ -1,0 +1,16 @@
+email:
+  imp4ssl: imap.gmail.com
+  port   : 993
+  account: xxxxxxx@gmail.com
+  password: xxxxxxx
+  white_list:
+    - Gan Liang <ganliang0122@gmail.com>
+
+transmission:
+  dowload_dir: /nmt/volumn/download
+  account: transmission
+  password: transmission
+
+re_spider:
+  dmhy_rss:
+    - .+極影字幕社.+女神異聞錄5.+\d{1,}.+BIG5.+720P.+MP4
