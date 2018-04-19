@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from torrentreceiver import TorrentReceiver
 import time
-import error as err
-import transmission as tran
 import sys
 
 if __name__ == '__main__':
@@ -9,11 +9,9 @@ if __name__ == '__main__':
         a= TorrentReceiver()
         a.run()
         while True:
-            #tran.List_Torrent()
-            a.spider()
             time.sleep(100000)
-    except:
+    #except:
         a.close()
-    finally:
+    #finally:
         sys.exit()
     #    a.close()

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import imaplib2
 from threading import *
 from Queue import Queue
@@ -15,7 +17,7 @@ class Listener(object):
     def login(self,imp4ssl,port,account,pwd):
         M = imaplib2.IMAP4_SSL(imp4ssl,int(port))
         M.login(account,pwd)
-        M.select("inbox")
+        M.select("INBOX")
         return M
 
     def start(self, imp4ssl, port, account, pwd):

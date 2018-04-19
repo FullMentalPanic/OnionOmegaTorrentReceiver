@@ -1,8 +1,8 @@
 email:
   imp4ssl: imap.gmail.com
   port   : 993
-  account: xxxxxxx@gmail.com
-  password: xxxxxxx
+  account: xxxx@gmail.com
+  password: xxxxx
   white_list:
     - Gan Liang <ganliang0122@gmail.com>
 
@@ -14,3 +14,4 @@ transmission:
 re_spider:
   dmhy_rss:
     - .+極影字幕社.+女神異聞錄5.+\d{1,}.+BIG5.+720P.+MP4
+    - .+豌豆字幕组.+风之圣殿字幕组.+齐木楠雄的灾难.+第二季.+\d{1,}.+简体.+720P.+MP4

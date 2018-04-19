@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import imaplib2
 from threading import *
 from Queue import Queue
 #import subprocess
-import transmission as tran
+import control as cl
 #transmission = '/usr/bin/transmission-remote'
 
 
@@ -33,7 +35,7 @@ class Downloader(object):
             if url is None:
                 break
             else:
-                tran.Add_Torrent(url)
+                cl.Add_Torrent(url)
             self.queue.task_done()
         self.queue.task_done()
         return
