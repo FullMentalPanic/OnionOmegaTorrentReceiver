@@ -8,16 +8,23 @@ from threading import *
 
 class PiMonitor(object):
     def __init__(self):
-        self.thread = Thread(target = self.check_harddisk_space_periodic, args = ())
+        self.thread = Thread(target = self.check_Pi_State_periodic, args = ())
         self.thread.daemon = True
-              
+
     def run():
         self.thread.start()
 
-    def check_harddisk_space_periodic(s = sched.scheduler(time.time, )):# every 1h =60*60 s
+    def check_Pi_State_periodic(self):# every 1m =60 s
         while True:
-            print 'check_harddisk_spare'
-            time.sleep(1*60*60)
+            self.check_harddisk_spare()
+            self.check_HDMI_status()
+            time.sleep(1*60)
+
+    def check_harddisk_spare(self):
+        print 'check_harddisk_spare'
+
+    def check_HDMI_status(self):
+        print 'check_HDMI_state'
 
     def close(self):
         self.thread.join()
