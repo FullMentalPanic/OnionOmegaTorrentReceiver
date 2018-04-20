@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
-
-import imaplib2
 from threading import *
 from Queue import Queue
-#import subprocess
 import control as cl
-#transmission = '/usr/bin/transmission-remote'
 
 
 class Downloader(object):
     def __init__(self):
         self.thread = Thread(target=self.processor)
+        self.thread.daemon = True
 
     def start(self,):
         self.queue = Queue()

@@ -5,13 +5,12 @@ import time
 import sys
 
 if __name__ == '__main__':
-    #try:
+    try:
         a= TorrentReceiver()
         a.run()
         while True:
             time.sleep(100000)
-    #except:
+    except:
         a.close()
-    #finally:
+    finally:
         sys.exit()
-    #    a.close()
