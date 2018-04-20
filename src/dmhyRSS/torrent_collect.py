@@ -12,7 +12,7 @@ import control as cl
 
 
 
-class TorrentCollect(object):    
+class TorrentCollect(object):
     def __init__(self):
         with open("config.yml", 'r') as ymlfile:
             cfg = yaml.load(ymlfile)
@@ -23,13 +23,13 @@ class TorrentCollect(object):
         self.magnetqueue = self.bt.start()
         self.tran_checker = TransmissionMonitor()
         self.tran_checker.start()
-        time.sleep(53)
+        time.sleep(17)
         self.pi_checker = PiMonitor()
         self.pi_checker.start()
-        time.sleep(53)
-        self.mailreceiver = MailMonitor(self.magnetqueue, self.mail['white_list'])
-        self.mailreceiver.start(self.mail['imp4ssl'], self.mail['port'], self.mail['account'], self.mail['password'])
-        time.sleep(53)
+        time.sleep(17)
+        self.mailreceiver = MailMonitor(self.magnetqueue, self.mail['white_list'],self.mail['imp4ssl'], self.mail['port'], self.mail['account'], self.mail['password'])
+        self.mailreceiver.start()
+        time.sleep(17)
         self.webreceiver = WebMonitor(self.magnetqueue)
         self.webreceiver.start()
 

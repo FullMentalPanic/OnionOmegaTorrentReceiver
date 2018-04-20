@@ -10,7 +10,7 @@ class TransmissionMonitor(object):
         self.thread = Thread(target = self.remove_transmission_finish_work_periodic, args = ())
         self.thread.daemon = True
 
-    def run():
+    def start(self):
         self.thread.start()
 
     def remove_transmission_finish_work_periodic(self): # every 4h  = 4*60 *60

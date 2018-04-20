@@ -11,7 +11,7 @@ class PiMonitor(object):
         self.thread = Thread(target = self.check_Pi_State_periodic, args = ())
         self.thread.daemon = True
 
-    def run():
+    def start(self):
         self.thread.start()
 
     def check_Pi_State_periodic(self):# every 1m =60 s

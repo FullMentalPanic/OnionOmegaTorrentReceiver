@@ -7,26 +7,30 @@ import email
 import time
 
 class MailMonitor(object):
-    def __init__(self, queue = Queue(), white_list = []):
-        self.thread = Thread(target=self.listening)
+    def __init__(self, queue = Queue(), white_list = [], imp4ssl=None, port=None, account=None, pwd=None):
+        self.thread = Thread(target=self.listening, args =(imp4ssl,port,account,pwd))
         self.queue = queue
         self.white_list = white_list
         self.thread.daemon = True
 
     def login(self,imp4ssl,port,account,pwd):
-        M = imaplib.IMAP4_SSL(imp4ssl,int(port))
-        M.login(account,pwd)
-        M.select("INBOX")
-        return M
+        self.M = imaplib.IMAP4_SSL(imp4ssl,int(port))
+        self.M.login(account,pwd)
+        self.M.select("INBOX")
 
-    def start(self, imp4ssl, port, account, pwd):
-        self.M = self.login(imp4ssl, port, account, pwd)
+    def logout(self):
+        self.M.close()
+        self.M.logout()
+
+    def start(self):
         self.thread.start()
 
-    def listening(self):
+    def listening(self,imp4ssl,port,account,pwd):
         while True:
+            self.login(imp4ssl, port, account, pwd)
             self.check_unread()
-            time.sleep(60 *60)
+            self.logout()
+            time.sleep(15 *60)
 
     def extract_magnet(self, msg_num):
         typ, data = self.M.fetch(msg_num, '(RFC822)')
@@ -56,15 +60,13 @@ class MailMonitor(object):
         if unread_msg_nums is not None:
             for msg_num in unread_msg_nums:
                 magnet= self.extract_magnet(msg_num)
-                if url is not None:
+                if magnet is not None:
                     self.queue.put(magnet)
                 else:
                     continue
 
     def close(self):
         self.thread.join()
-        self.M.close()
-        self.M.logout()
 
     def __del__(self):
         self.thread.join()

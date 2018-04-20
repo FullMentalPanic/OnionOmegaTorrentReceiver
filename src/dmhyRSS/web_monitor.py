@@ -4,6 +4,7 @@ import time
 import os
 import control as cl
 from threading import *
+from Queue import Queue
 
 class WebMonitor(object):
     def __init__(self,queue = Queue()):
@@ -11,7 +12,7 @@ class WebMonitor(object):
         self.queue = queue
         self.thread.daemon = True
 
-    def run():
+    def start(self):
         self.thread.start()
 
     def run_spider_periodic(self):  #every 12 h =12*60*60 s
