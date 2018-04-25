@@ -23,8 +23,8 @@ class DmhyrssPipeline(object):
     def process_item(self, item, spider):
         title = item['title']
         magnet = item['magnet']
-        if title in self.file.read():
-            if len(self.queue) < 200:
+        if title not in self.file.read():
+            if len(self.queue) < 500:
                 self.queue.append(title)
             else:
                 self.queue.pop(0)

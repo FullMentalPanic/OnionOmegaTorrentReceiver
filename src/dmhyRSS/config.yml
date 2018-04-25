@@ -1,7 +1,7 @@
 email:
   imp4ssl: imap.gmail.com
   port   : 993
-  account: xxxxx@gmail.com
+  account: xxxxxx@gmail.com
   password: xxxxxx
   white_list:
     - Gan Liang <ganliang0122@gmail.com>
@@ -16,3 +16,5 @@ re_spider:
     - .+極影字幕社.+女神異聞錄5.+\d{1,}.+BIG5.+720P.+MP4
     - .+豌豆字幕组.+风之圣殿字幕组.+齐木楠雄的灾难.+第二季.+\d{1,}.+简体.+720P.+MP4
     - .+澄空学园.+魔卡少女樱.+透明卡篇.+第.+\d{1,}.+话.+MP4.+720p
+    - .+雪飘工作室.+全金属狂潮.+\d{1,}.+720p.+简体内嵌
+    - .+豌豆字幕组.+七大罪 戒律的复活 Nanatsu no Taizai Imashime no Fukkatsu.+\d{1,}+BIG5繁體.+720P.+MP4
