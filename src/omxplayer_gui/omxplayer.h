@@ -39,10 +39,10 @@ class omxplayer;
 const char*  const pause = "p";
 const char*  const play = "p";
 const char*  const stop = "q";
-//const char*  const left_arrow = (wchar_t) 8594 ;
-//const char*  const up_arrow = '\u2191';
-//const char*  const right_arrow = '\u2192';
-//const char*  const down_arrow = '\u2193';
+const char*  const left_arrow = "\033[D";
+const char*  const up_arrow = "\033[A";
+const char*  const right_arrow = "\033[C";
+const char*  const down_arrow = "\033[B";
 
 
 class omxplayer : public QMainWindow

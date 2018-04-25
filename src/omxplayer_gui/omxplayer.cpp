@@ -80,6 +80,11 @@ void omxplayer::keyPressEvent(QKeyEvent * event)
     case Qt::Key_O:
         on_actionOpen_triggered();
         break;
+    case Qt::Key_Left:
+        on_actionBack_triggered();
+        break;
+    case Qt::Key_Right:
+        on_actionForward_triggered();
     default:
         //this->raise();
         //this->activateWindow();
@@ -124,12 +129,15 @@ void omxplayer::on_actionStop_triggered()
 
 void omxplayer::on_actionBack_triggered()
 {
-
+    player->write(left_arrow);
+    ui->statusBar->showMessage("-30");
 }
 
 
 void omxplayer::on_actionForward_triggered()
 {
+    player->write(right_arrow);
+    ui->statusBar->showMessage("+30");
 
 }
 
