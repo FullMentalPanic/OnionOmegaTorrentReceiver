@@ -56,13 +56,13 @@ public:
 
 private slots:
     void on_actionOpen_triggered();
-    void on_actionPlay_triggered();
     void on_actionPause_triggered();
     void on_actionStop_triggered();
     void on_actionBack_triggered();
     void on_actionForward_triggered();
     void slotShow(QDir dir);
     void slotDirShow(QListWidgetItem *Item);
+    void slotChoose(QListWidgetItem *Item);
 
 
 private:

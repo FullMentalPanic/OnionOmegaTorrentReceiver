@@ -22,7 +22,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
-   <addaction name="actionPlay"/>
    <addaction name="actionPause"/>
    <addaction name="actionStop"/>
    <addaction name="actionBack"/>
@@ -33,25 +32,13 @@
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="resourse.qrc">
-     <normaloff>:/images/icon/folder.png</normaloff>:/images/icon/folder.png</iconset>
+     <normaloff>:/images/icon/play.png</normaloff>:/images/icon/play.png</iconset>
    </property>
    <property name="text">
     <string>Open</string>
    </property>
    <property name="toolTip">
     <string>Open A File</string>
-   </property>
-  </action>
-  <action name="actionPlay">
-   <property name="icon">
-    <iconset resource="resourse.qrc">
-     <normaloff>:/images/icon/play.png</normaloff>:/images/icon/play.png</iconset>
-   </property>
-   <property name="text">
-    <string>Play</string>
-   </property>
-   <property name="toolTip">
-    <string>Play Video</string>
    </property>
   </action>
   <action name="actionPause">

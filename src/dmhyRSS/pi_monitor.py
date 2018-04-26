@@ -4,7 +4,7 @@ import time
 import os
 import control as cl
 import RPi.GPIO as GPIO
-import torrent_collect
+from torrent_collect import TorrentCollect
 
 debug = 0
 
@@ -19,7 +19,7 @@ class PiMonitor(object):
     def run(self):
         cl.open_omxplay_gui()
         self.torrent = TorrentCollect()
-        self.torrent_runnning = torrent.run()
+        self.torrent_runnning = self.torrent.run()
         while True: # every 1m =30 s
             try:
                 if self.torrent_runnning == 1:
@@ -29,19 +29,19 @@ class PiMonitor(object):
                 self.check_HDMI_status()
                 self.control_CPU_GPU_tempture()
                 time.sleep(1*20)
-            except Exception as 'HDD space full': 
+            except Exception:
                 self.torrent.close()
                 self.torrent_runnning = 0
             else:
                 self.torrent.close()
                 raise
-                
+
     def check_harddisk_spare(self):
         spare = cl.check_HDD_spare()
         if debug:
             print spare
         if spare < 1.0:
-            raise Exception('HDD space full')
+            raise Exception('HDDfull')
         else:
             pass
 

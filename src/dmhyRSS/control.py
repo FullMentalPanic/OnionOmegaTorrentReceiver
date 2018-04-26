@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # all linux cmd used in python code
 import subprocess
+import os
 
 transmission_start = ['sudo', 'service', 'transmission-daemon', 'start']
 transmission_stop = ['sudo', 'service', 'transmission-daemon', 'stop']
@@ -11,7 +12,7 @@ transmission_remove = ['/usr/bin/transmission-remote', "-n", "transmission:trans
 get_GPU_temp = ["/opt/vc/bin/vcgencmd measure_temp"]
 disk_usage = ["df"]
 HMDI_status = ["sudo tvservice -s"]
-RUN_OMXPLAY_GUI = ["../omplayer_gui/omplayer_gui"]
+RUN_OMXPLAY_GUI = ["./omxplayer_gui"]
 
 def Add_Torrent(url):
     transmission_add_torrent.append(url)
@@ -87,4 +88,7 @@ def check_HDMI_status():
     return state
 
 def open_omxplay_gui():
-    subprocess.call(RUN_OMXPLAY_GUI)
+    #RUN_OMXPLAY_GUI[0]=os.path.abspath("omplayer_gui")
+    #print RUN_OMXPLAY_GUI
+    #subprocess.call(RUN_OMXPLAY_GUI)
+    subprocess.Popen(RUN_OMXPLAY_GUI, shell=True)

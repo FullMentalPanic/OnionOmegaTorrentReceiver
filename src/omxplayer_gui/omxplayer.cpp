@@ -45,8 +45,8 @@ omxplayer::omxplayer(QWidget *parent) :
     filewidget->setLayout(vLayout);
     this->setCentralWidget(filewidget);
 
-
-    //--设置对应信号与槽
+    connect(fileListWidget, SIGNAL(itemClicked(QListWidgetItem *)),
+                this, SLOT(slotChoose(QListWidgetItem*)));
     connect(fileListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
                 this, SLOT(slotDirShow(QListWidgetItem*)));
 
@@ -57,10 +57,6 @@ omxplayer::omxplayer(QWidget *parent) :
     list = rootDir.entryInfoList(stringlist);
     showFileInfoList(list);
 
-    //---显示布局
- //   setLayout(vLayout);
-    //----设置窗口属性
-    //setWindowTitle("File View");
 }
 
 omxplayer::~omxplayer()
@@ -72,7 +68,7 @@ void omxplayer::keyPressEvent(QKeyEvent * event)
 {
     switch (event->key()) {
     case Qt::Key_P:
-        on_actionPlay_triggered();
+        on_actionPause_triggered();
         break;
     case Qt::Key_Q:
         on_actionStop_triggered();
@@ -86,38 +82,32 @@ void omxplayer::keyPressEvent(QKeyEvent * event)
     case Qt::Key_Right:
         on_actionForward_triggered();
     default:
-        //this->raise();
-        //this->activateWindow();
         break;
     }
 }
 
 void omxplayer::on_actionOpen_triggered()
 {
-    //this->raise();
-    //this->activateWindow();
-    //on_actionPause_triggered();
-    //QString filename = QFileDialog::getOpenFileName(this,"Open a file", "/nmt/volumn/download/", "Video File (*.avi, *.mpg, *.mp4)");
     QStringList args;
     QString prog = OMXPLAYER;
-    on_actionStop_triggered();
-    args << Videofile;
-    player->start(prog, args);
-    ui->statusBar->showMessage(Videofile);
+    if (Videofile == "ff")
+    {
+        ui->statusBar->showMessage("no right file choose");
+    }else{
+        on_actionStop_triggered();
+        args << Videofile;
+        player->start(prog, args);
+        ui->statusBar->showMessage(Videofile);
+    }
 
 }
 
-void omxplayer::on_actionPlay_triggered()
-{
-    player->write(play);
-    ui->statusBar->showMessage("Playing");
-}
 
 void omxplayer::on_actionPause_triggered()
 {
 
     player->write(pause);
-    ui->statusBar->showMessage("Paused");
+    ui->statusBar->showMessage("Paused/Go");
 }
 
 void omxplayer::on_actionStop_triggered()
@@ -141,7 +131,7 @@ void omxplayer::on_actionForward_triggered()
 
 }
 
-//--显示当前目录下的所有文件
+
 void omxplayer::slotShow(QDir dir)
 {
      QStringList stringList;
@@ -150,13 +140,12 @@ void omxplayer::slotShow(QDir dir)
      showFileInfoList(InfoList);
 }
 
-//---用双击浏览器中显示的目录进入下一级，或者返回上一级目录。
+
 void omxplayer::showFileInfoList(QFileInfoList list)
 {
-    //--清空列表控件
+
     fileListWidget->clear();
 
-    //----取出所有项，按照目录，文件方式添加到控件内
     for (unsigned int i = 0; i < list.count(); i++)
     {
         QFileInfo tmpFileInfo = list.at(i);
@@ -180,21 +169,48 @@ void omxplayer::showFileInfoList(QFileInfoList list)
     }
 }
 
-//----根据用户的选择显示下一级目录下的文件，
+
 void omxplayer::slotDirShow(QListWidgetItem *Item)
 {
-    //----保存下一级目录名
+
     QString string = Item->text();
     QDir dir;
-    //----设置路径为当前目录路径
+
     dir.setPath(fileLineEdit->text());
-    //-----重新设置路径
+
     if (dir.cd(string))
     {
-        //----更新当前显示路径， 这里获取的是绝对路径
+
         fileLineEdit->setText(dir.absolutePath());
-        //---显示当前文件目录下的所有文件
+
         slotShow(dir);
+        Videofile = "ff";
+        ui->statusBar->showMessage(dir.absolutePath());
+    }
+    else
+    {
+        Videofile = dir.absolutePath().append('/');
+        Videofile.append(string);
+        ui->statusBar->showMessage(Videofile);
+        on_actionOpen_triggered();
+    }
+
+}
+
+
+
+void omxplayer::slotChoose(QListWidgetItem *Item)
+{
+
+    QString string = Item->text();
+    QDir dir;
+
+    dir.setPath(fileLineEdit->text());
+
+    if (dir.cd(string))
+    {
+        Videofile = "ff";
+         ui->statusBar->showMessage(dir.absolutePath());
     }
     else
     {
