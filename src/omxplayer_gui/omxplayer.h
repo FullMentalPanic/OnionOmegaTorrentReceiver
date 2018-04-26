@@ -61,9 +61,7 @@ private slots:
     void on_actionStop_triggered();
     void on_actionBack_triggered();
     void on_actionForward_triggered();
-    //--显示当前目录下的所有文件
     void slotShow(QDir dir);
-    //----根据选择显示下一级目录下的文件，
     void slotDirShow(QListWidgetItem *Item);
 
 
@@ -77,7 +75,6 @@ private:
     QWidget *filewidget;
     QString Videofile;
     void keyPressEvent(QKeyEvent * event);
-    //---用双击浏览器中显示的目录进入下一级，或者返回上一级目录。
     void showFileInfoList(QFileInfoList list);
 };
 

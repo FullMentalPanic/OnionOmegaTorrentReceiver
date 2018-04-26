@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#thread: download torrent from queue
 from threading import *
 from Queue import Queue
 import control as cl

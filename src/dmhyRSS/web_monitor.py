@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#thread: run scray and put last magent to queue
 import time
 import os
 import control as cl

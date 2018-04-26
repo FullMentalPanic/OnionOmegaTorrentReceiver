@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+# thread: clear finish job from transmission
 import time
 import os
 import control as cl

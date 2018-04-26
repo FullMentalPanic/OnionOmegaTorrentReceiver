@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+#thread: check email and get magnet from inbox 
+
 import imaplib
 from threading import *
 from Queue import Queue

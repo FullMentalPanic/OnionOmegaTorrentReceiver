@@ -5,7 +5,6 @@ from web_monitor import WebMonitor
 from transmission_monitor import TransmissionMonitor
 from downloader import Downloader
 import yaml
-import error as err
 import time
 import control as cl
 
@@ -27,6 +26,7 @@ class TorrentCollect(object):
         time.sleep(10)
         self.webreceiver = WebMonitor(self.magnetqueue)
         self.webreceiver.start()
+        return 1
 
     def close(self):
         self.webreceiver.close()

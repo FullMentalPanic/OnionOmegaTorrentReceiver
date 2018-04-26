@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+# main process : check pi state, run TorrentCollect and omxplay
 import time
 import os
 import control as cl
 import RPi.GPIO as GPIO
-#from torrent_collect import TorrentCollectRun
 import torrent_collect
+
 debug = 0
-# set as main process
 
 class PiMonitor(object):
     def __init__(self):
@@ -14,21 +14,28 @@ class PiMonitor(object):
         GPIO.setup(3, GPIO.IN, pull_up_down = GPIO.PUD_UP) # shutdown button
         GPIO.setup(11,GPIO.OUT, initial = 0) # Fan control
         GPIO.add_event_detect(3, GPIO.FALLING, callback = Shutdown, bouncetime = 2000)
+        self.torrent_runnning = 0
 
-    def check_Pi_State_periodic(self):# every 1m =30 s
-
-            torrent = TorrentCollect()
-            torrent.run()
-
-            while True:
-                try:
+    def run(self):
+        cl.open_omxplay_gui()
+        self.torrent = TorrentCollect()
+        self.torrent_runnning = torrent.run()
+        while True: # every 1m =30 s
+            try:
+                if self.torrent_runnning == 1:
                     self.check_harddisk_spare()
-                    self.check_HDMI_status()
-                    self.control_CPU_GPU_tempture()
-                    time.sleep(1*20)
-                except Exception as 'HDD space full': 
-                    torrent.close()
-
+                else:
+                    pass
+                self.check_HDMI_status()
+                self.control_CPU_GPU_tempture()
+                time.sleep(1*20)
+            except Exception as 'HDD space full': 
+                self.torrent.close()
+                self.torrent_runnning = 0
+            else:
+                self.torrent.close()
+                raise
+                
     def check_harddisk_spare(self):
         spare = cl.check_HDD_spare()
         if debug:
@@ -39,7 +46,6 @@ class PiMonitor(object):
             pass
 
     def check_HDMI_status(self):
-        #print 'check_HDMI_state'
         status = cl.check_HDMI_status()
         if debug:
             print status
@@ -61,3 +67,8 @@ class PiMonitor(object):
 
 def Shutdown(channel):
     os.system("sudo shutdown -h now")
+
+
+if __name__ == '__main__':
+    app = PiMonitor()
+    app.run()

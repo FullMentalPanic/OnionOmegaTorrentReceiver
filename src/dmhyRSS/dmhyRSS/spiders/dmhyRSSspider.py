@@ -1,4 +1,5 @@
 ## -*- coding: utf-8 -*-
+# get magnet from target web
 import scrapy
 from dmhyRSS.items import *
 import yaml
@@ -7,7 +8,6 @@ from Queue import Queue
 
 class dmhyRSSspider(scrapy.Spider):
     name = "dmhy_rss"
-    #allowed_domains = ['share.dmhy.org']
     start_urls = [
         'https://share.dmhy.org/topics/rss/rss.xml',
     ]
