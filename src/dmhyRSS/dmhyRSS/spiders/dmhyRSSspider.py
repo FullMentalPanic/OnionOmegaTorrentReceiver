@@ -22,7 +22,7 @@ class dmhyRSSspider(scrapy.Spider):
             title = rss.xpath(".//title/text()").extract_first()
             for re_rule in re_list:
                 if re.search(re_rule, title) is not None:
-                    item['title'] = title.encode('utf8')
+                    item['title'] = title
                     item['magnet'] = rss.xpath(".//enclosure/@url").extract_first()
                     yield item
                 else:

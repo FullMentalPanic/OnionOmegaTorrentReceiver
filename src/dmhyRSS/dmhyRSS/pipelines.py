@@ -6,30 +6,52 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 # only save new magnet
 import os
+import codecs
+import re
 
 class DmhyrssPipeline(object):
     def open_spider(self, spider):
-        self.file = open(spider.name+ '_title.txt', 'w+')
+        self.file = codecs.open(spider.name+ '_queue.txt','r+')
         self.torrent_list = open(spider.name+'_magnet.txt','w')
         self.queue = []
+
         for line in self.file:
-            self.queue.append(line.encode('utf8'))
+            self.queue.append(line)
 
     def close_spider(self, spider):
-        for item in self.queue:
-            self.file.write(item+'\n')
+        self.file.seek(0)
+        for magnet in self.queue:
+            self.file.write(magnet)
         self.file.close()
         self.torrent_list.close()
 
+#    def process_item(self, item, spider):
+#        title = item['title']
+#        magnet = str(item['magnet']).encode('utf-8')
+#        self.file.seek(0)
+#        a = str(self.file.read())
+#        if a.find(magnet) == -1:
+#            if len(self.queue) < 100:
+#                self.queue.append(magnet+'\n')
+#            else:
+#                self.queue.pop(0)
+#                self.queue.append(magnet+'\n')
+#            self.torrent_list.write(magnet+'\n')
+#        else:
+#            pass
+#        return item
+
     def process_item(self, item, spider):
-        title = item['title']
+        title = str(item['title'].encode('utf-8'))
         magnet = item['magnet']
-        if title not in self.file.read():
-            if len(self.queue) < 500:
-                self.queue.append(title)
+        self.file.seek(0)
+        a = str(self.file.read())
+        if a.find(title) == -1:
+            if len(self.queue) < 100:
+                self.queue.append(title+'\n')
             else:
                 self.queue.pop(0)
-                self.queue.append(title)
+                self.queue.append(title+'\n')
             self.torrent_list.write(magnet+'\n')
         else:
             pass
