@@ -63,6 +63,8 @@ private slots:
     void slotShow(QDir dir);
     void slotDirShow(QListWidgetItem *Item);
     void slotChoose(QListWidgetItem *Item);
+    void slotChoose_1(QListWidgetItem *current,QListWidgetItem *previous);
+    void slotDirShow_1(QListWidgetItem *Item);
 
 
 private:

@@ -45,12 +45,17 @@ omxplayer::omxplayer(QWidget *parent) :
     filewidget->setLayout(vLayout);
     this->setCentralWidget(filewidget);
 
+
     connect(fileListWidget, SIGNAL(itemClicked(QListWidgetItem *)),
                 this, SLOT(slotChoose(QListWidgetItem*)));
     connect(fileListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
                 this, SLOT(slotDirShow(QListWidgetItem*)));
+    connect(fileListWidget,SIGNAL(currentItemChanged(QListWidgetItem *,QListWidgetItem *)),
+            this,SLOT(slotChoose_1(QListWidgetItem*,QListWidgetItem*)));
+    connect(fileListWidget, SIGNAL(itemActivated(QListWidgetItem *)),
+                this, SLOT(slotDirShow_1(QListWidgetItem*)));
 
-    QString rootStr = "/mnt/volume/download/";
+    QString rootStr ="/mnt/volume/download/";// "/mnt/volume/download/";
     QDir rootDir(rootStr);
     QStringList stringlist;
     stringlist << "*";
@@ -81,6 +86,7 @@ void omxplayer::keyPressEvent(QKeyEvent * event)
         break;
     case Qt::Key_Right:
         on_actionForward_triggered();
+        break;
     default:
         break;
     }
@@ -167,6 +173,7 @@ void omxplayer::showFileInfoList(QFileInfoList list)
             }
         }
     }
+
 }
 
 
@@ -197,12 +204,63 @@ void omxplayer::slotDirShow(QListWidgetItem *Item)
 
 }
 
+void omxplayer::slotDirShow_1(QListWidgetItem *Item)
+{
 
+    QString string = Item->text();
+    QDir dir;
+
+    dir.setPath(fileLineEdit->text());
+
+    if (dir.cd(string))
+    {
+
+        fileLineEdit->setText(dir.absolutePath());
+
+        slotShow(dir);
+        Videofile = "ff";
+        ui->statusBar->showMessage(dir.absolutePath());
+    }
+    else
+    {
+        Videofile = dir.absolutePath().append('/');
+        Videofile.append(string);
+        ui->statusBar->showMessage(Videofile);
+        on_actionOpen_triggered();
+    }
+
+}
 
 void omxplayer::slotChoose(QListWidgetItem *Item)
 {
 
     QString string = Item->text();
+    QDir dir;
+
+    dir.setPath(fileLineEdit->text());
+
+    if (dir.cd(string))
+    {
+        Videofile = "ff";
+         ui->statusBar->showMessage(dir.absolutePath());
+    }
+    else
+    {
+        Videofile = dir.absolutePath().append('/');
+        Videofile.append(string);
+        ui->statusBar->showMessage(Videofile);
+    }
+
+}
+
+void omxplayer::slotChoose_1(QListWidgetItem *current,QListWidgetItem *previous)
+{
+
+    if (current == NULL)
+    {
+        return;
+    }
+    QString string = current->text();
     QDir dir;
 
     dir.setPath(fileLineEdit->text());
