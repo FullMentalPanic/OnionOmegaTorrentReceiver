@@ -7,7 +7,9 @@ Hardware:
 Software:
 
   python 2.7 - python lib imaplib2, PyYAML, Scrapy,
+  
   C++ - Qt5
+  
   Linux software - Transmission-remote, omxplayer
   
 Function:
