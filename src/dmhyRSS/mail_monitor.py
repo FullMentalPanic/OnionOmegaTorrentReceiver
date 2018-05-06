@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#thread: check email and get magnet from inbox 
+#thread: check email and get magnet from inbox
 
 import imaplib
 from threading import *
@@ -29,19 +29,25 @@ class MailMonitor(object):
 
     def listening(self,imp4ssl,port,account,pwd):
         while True:
-            self.login(imp4ssl, port, account, pwd)
-            self.check_unread()
-            self.logout()
+            try:
+                self.login(imp4ssl, port, account, pwd)
+                self.check_unread()
+                self.logout()
+            except:
+                print "can not read email"
             time.sleep(15 *60)
 
     def extract_magnet(self, msg_num):
         typ, data = self.M.fetch(msg_num, '(RFC822)')
         body = None
+        subject = None
         for response_part in data:
             if isinstance(response_part,tuple):
                 msg = email.message_from_string(response_part[1])
+                subject, encoding = email.Header.decode_header(msg['subject'])[0]
+                #subject = msg['subject']
+                #print subject
                 if msg['from'] not in self.white_list:
-                    #print msg['subject']
                     print msg['from']
                     break
                 if msg.is_multipart():
@@ -54,7 +60,8 @@ class MailMonitor(object):
                 else:
                     body = msg.get_payload()
                 break
-        return body
+
+        return [subject,body]
 
     def check_unread(self):
         status, response = self.M.search(None, 'UNSEEN')

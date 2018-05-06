@@ -2,12 +2,12 @@ email:
   imp4ssl: imap.gmail.com
   port   : 993
   account: xxxxxx@gmail.com
-  password: xxxxxxx
+  password: xxxxx
   white_list:
     - Gan Liang <ganliang0122@gmail.com>
 
 transmission:
-  dowload_dir: /nmt/volumn/download
+  dowload_dir: /mnt/volume/download/
   account: transmission
   password: transmission
 
@@ -18,3 +18,9 @@ re_spider:
     - .+澄空学园.+魔卡少女樱.+透明卡篇.+第.+\d{1,}.+话.+MP4.+720p
     - .+雪飘工作室.+全金属狂潮.+\d{1,}.+720p.+简体内嵌
     - .+豌豆字幕组.+七大罪.+戒律的复活.+\d{1,}.+BIG5繁體.+720P.+MP4
+  location:
+    - 女神異聞錄5
+    - 齐木楠雄的灾难
+    - 魔卡少女樱透明卡篇
+    - 全金属狂潮4
+    - 七大罪戒律的复活

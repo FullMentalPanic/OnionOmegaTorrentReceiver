@@ -35,12 +35,12 @@ omxplayer::omxplayer(QWidget *parent) :
     ui->setupUi(this);
     player = new QProcess();
 
-    fileLineEdit = new QLineEdit("/mnt/volume/download/", this);
+    //fileLineEdit = new QLineEdit("/home/ganliang/", this);
     fileListWidget = new QListWidget(this);
 
     filewidget = new QWidget();
     vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(fileLineEdit);
+    //vLayout->addWidget(fileLineEdit);
     vLayout->addWidget(fileListWidget);
     filewidget->setLayout(vLayout);
     this->setCentralWidget(filewidget);
@@ -48,19 +48,21 @@ omxplayer::omxplayer(QWidget *parent) :
 
     connect(fileListWidget, SIGNAL(itemClicked(QListWidgetItem *)),
                 this, SLOT(slotChoose(QListWidgetItem*)));
-    connect(fileListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-                this, SLOT(slotDirShow(QListWidgetItem*)));
+    //connect(fileListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+      //          this, SLOT(slotDirShow(QListWidgetItem*)));
     connect(fileListWidget,SIGNAL(currentItemChanged(QListWidgetItem *,QListWidgetItem *)),
             this,SLOT(slotChoose_1(QListWidgetItem*,QListWidgetItem*)));
     connect(fileListWidget, SIGNAL(itemActivated(QListWidgetItem *)),
                 this, SLOT(slotDirShow_1(QListWidgetItem*)));
 
-    QString rootStr ="/mnt/volume/download/";// "/mnt/volume/download/";
+    rootStr ="/mnt/volume/download/";// "/mnt/volume/download/";
+    ui->statusBar->showMessage(rootStr);
     QDir rootDir(rootStr);
     QStringList stringlist;
     stringlist << "*";
     list = rootDir.entryInfoList(stringlist);
     showFileInfoList(list);
+    QTimer::singleShot(100, this, SLOT(showFullScreen()));
 
 }
 
@@ -78,15 +80,17 @@ void omxplayer::keyPressEvent(QKeyEvent * event)
     case Qt::Key_Q:
         on_actionStop_triggered();
         break;
-    case Qt::Key_O:
-        on_actionOpen_triggered();
-        break;
+ //   case Qt::Key_O:
+   //     on_actionOpen_triggered();
+     //   break;
     case Qt::Key_Left:
         on_actionBack_triggered();
         break;
     case Qt::Key_Right:
         on_actionForward_triggered();
         break;
+    case Qt::Key_E:
+        this->close();
     default:
         break;
     }
@@ -171,6 +175,11 @@ void omxplayer::showFileInfoList(QFileInfoList list)
                 QListWidgetItem*tmpListWidgetItem = new QListWidgetItem( QIcon(":/images/icon/file.png"), fileName);
                 fileListWidget->addItem(tmpListWidgetItem);
             }
+            else{
+                QString fileName = tmpFileInfo.fileName();
+                QListWidgetItem*tmpListWidgetItem = new QListWidgetItem( QIcon(":/images/icon/otherfile.png"), fileName);
+                fileListWidget->addItem(tmpListWidgetItem);
+            }
         }
     }
 
@@ -183,12 +192,12 @@ void omxplayer::slotDirShow(QListWidgetItem *Item)
     QString string = Item->text();
     QDir dir;
 
-    dir.setPath(fileLineEdit->text());
+    dir.setPath(rootStr);
 
     if (dir.cd(string))
     {
 
-        fileLineEdit->setText(dir.absolutePath());
+        rootStr = dir.absolutePath();
 
         slotShow(dir);
         Videofile = "ff";
@@ -210,12 +219,12 @@ void omxplayer::slotDirShow_1(QListWidgetItem *Item)
     QString string = Item->text();
     QDir dir;
 
-    dir.setPath(fileLineEdit->text());
+    dir.setPath(rootStr);
 
     if (dir.cd(string))
     {
 
-        fileLineEdit->setText(dir.absolutePath());
+        rootStr = dir.absolutePath();
 
         slotShow(dir);
         Videofile = "ff";
@@ -237,7 +246,7 @@ void omxplayer::slotChoose(QListWidgetItem *Item)
     QString string = Item->text();
     QDir dir;
 
-    dir.setPath(fileLineEdit->text());
+    dir.setPath(rootStr);
 
     if (dir.cd(string))
     {
@@ -263,7 +272,7 @@ void omxplayer::slotChoose_1(QListWidgetItem *current,QListWidgetItem *previous)
     QString string = current->text();
     QDir dir;
 
-    dir.setPath(fileLineEdit->text());
+    dir.setPath(rootStr);
 
     if (dir.cd(string))
     {
@@ -278,3 +287,4 @@ void omxplayer::slotChoose_1(QListWidgetItem *current,QListWidgetItem *previous)
     }
 
 }
+

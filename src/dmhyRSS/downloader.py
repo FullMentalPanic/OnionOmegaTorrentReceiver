@@ -3,6 +3,7 @@
 from threading import *
 from Queue import Queue
 import control as cl
+import os
 
 
 class Downloader(object):
@@ -28,12 +29,21 @@ class Downloader(object):
 
     def processor(self):
         while True:
-            url = self.queue.get()
-            #print url
-            if url is None:
+            magent = self.queue.get()
+            if magent is None:
                 break
             else:
-                cl.Add_Torrent(url)
+                url = magent[1]
+                location = magent[0]
+                cwd = '/mnt/volume/download/'
+                #print location
+                if location is not None:
+                    cwd = '/mnt/volume/download/'+location+'/'
+                    if not os.path.isdir(cwd):
+                        cl.creat_folder(cwd)
+                    else:
+                        pass
+                cl.Add_Torrent(url,cwd)
             self.queue.task_done()
         self.queue.task_done()
         return

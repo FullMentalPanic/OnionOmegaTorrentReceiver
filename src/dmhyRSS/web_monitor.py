@@ -23,7 +23,8 @@ class WebMonitor(object):
             if os.path.isfile(cwd):
                 f = open(cwd)
                 for magnet in f:
-                    self.queue.put(magnet)
+                    tmp = magnet.split(',')
+                    self.queue.put(tmp)
                 f.close()
                 os.remove(cwd)
             else:

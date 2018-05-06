@@ -13,5 +13,6 @@ class DmhyrssItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     title = scrapy.Field()
+    location = scrapy.Field()
     magnet = scrapy.Field()
     pass

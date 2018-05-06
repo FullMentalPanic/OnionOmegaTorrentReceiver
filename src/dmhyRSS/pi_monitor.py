@@ -5,6 +5,7 @@ import os
 import control as cl
 import RPi.GPIO as GPIO
 from torrent_collect import TorrentCollect
+from BlueToothControl import BluetoothControl
 
 debug = 0
 
@@ -12,8 +13,10 @@ class PiMonitor(object):
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(3, GPIO.IN, pull_up_down = GPIO.PUD_UP) # shutdown button
+        GPIO.setup(15, GPIO.IN, pull_up_down = GPIO.PUD_UP) # Enable bluetooth
         GPIO.setup(11,GPIO.OUT, initial = 0) # Fan control
         GPIO.add_event_detect(3, GPIO.FALLING, callback = Shutdown, bouncetime = 2000)
+        GPIO.add_event_detect(15, GPIO.FALLING, callback = BluetoothOn, bouncetime = 2000)
         self.torrent_runnning = 0
 
     def run(self):
@@ -68,6 +71,10 @@ class PiMonitor(object):
 def Shutdown(channel):
     os.system("sudo shutdown -h now")
 
+def BluetoothOn(channel):
+    cl.Bluetooth_Discoverable()
+    con = BluetoothControl()
+    con.start()
 
 if __name__ == '__main__':
     app = PiMonitor()

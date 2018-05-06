@@ -17,13 +17,17 @@ class dmhyRSSspider(scrapy.Spider):
             cfg = yaml.load(ymlfile)
         my_spider = cfg['re_spider']
         re_list = my_spider['dmhy_rss']
+        location = my_spider['location']
         item = DmhyrssItem()
         for rss in response.xpath("//item"):
             title = rss.xpath(".//title/text()").extract_first()
+            count = 0
             for re_rule in re_list:
                 if re.search(re_rule, title) is not None:
                     item['title'] = title
+                    item['location'] = location[count]
                     item['magnet'] = rss.xpath(".//enclosure/@url").extract_first()
                     yield item
                 else:
                     pass
+                count = count + 1

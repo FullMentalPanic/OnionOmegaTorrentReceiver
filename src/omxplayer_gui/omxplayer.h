@@ -70,12 +70,13 @@ private slots:
 private:
     Ui::omxplayer *ui;
     QProcess *player;
-    QLineEdit *fileLineEdit;
+    //QLineEdit *fileLineEdit;
     QListWidget *fileListWidget;
     QVBoxLayout *vLayout;
     QFileInfoList list;
     QWidget *filewidget;
     QString Videofile;
+    QString rootStr;
     void keyPressEvent(QKeyEvent * event);
     void showFileInfoList(QFileInfoList list);
 };
