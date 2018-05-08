@@ -5,7 +5,7 @@ import os
 import control as cl
 import RPi.GPIO as GPIO
 from torrent_collect import TorrentCollect
-from BlueToothControl import BluetoothControl
+from bluetoothcontrol import BluetoothControl
 
 debug = 0
 
@@ -20,6 +20,9 @@ class PiMonitor(object):
         self.torrent_runnning = 0
 
     def run(self):
+        cl.Bluetooth_Discoverable()
+        self.con = BluetoothControl()
+        self.con.start()
         cl.open_omxplay_gui()
         self.torrent = TorrentCollect()
         self.torrent_runnning = self.torrent.run()
@@ -67,15 +70,25 @@ class PiMonitor(object):
             GPIO.output(11,0)
         else:
             pass
+    def close(self):
+        self.con.close()
+        self.torrent.close()
+
+    def __del__(self):
+        self.con.close()
+        self.torrent.close()
 
 def Shutdown(channel):
     os.system("sudo shutdown -h now")
 
 def BluetoothOn(channel):
     cl.Bluetooth_Discoverable()
-    con = BluetoothControl()
-    con.start()
+    #con = BluetoothControl()
+    #con.start()
 
 if __name__ == '__main__':
-    app = PiMonitor()
-    app.run()
+    #try:
+        app = PiMonitor()
+        app.run()
+    #except:
+        app.close()

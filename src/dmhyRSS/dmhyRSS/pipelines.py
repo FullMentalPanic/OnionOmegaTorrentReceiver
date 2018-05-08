@@ -28,7 +28,7 @@ class DmhyrssPipeline(object):
     def process_item(self, item, spider):
         title = str(item['title'].encode('utf-8'))
         location = str(item['location'].encode('utf-8'))
-        magnet = item['magnet']
+        magnet = str(item['magnet'].encode('utf-8'))
         self.file.seek(0)
         a = str(self.file.read())
         if a.find(title) == -1:
