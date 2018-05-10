@@ -2,7 +2,7 @@
 
 Hardware: 
 
-  Rassberry Pi 3 and Usbstorage
+  Rassberry Pi 3 , Usbstorage,  Nexus 5
   
 Software:
 
@@ -10,11 +10,13 @@ Software:
   
   C++ - Qt5
   
-  Linux software - Transmission-remote, omxplayer
+  Linux tool  - Transmission-remote, omxplayer
+  
+  Java - android 5.1
   
 Function:
   
   1. download torrent from email
   2. trace torrent from web
   3. add simple gui for omxplay to display video
-  4. andoird bluetooth app as input equipment (pending)
+  4. andoird bluetooth app as input equipment 
