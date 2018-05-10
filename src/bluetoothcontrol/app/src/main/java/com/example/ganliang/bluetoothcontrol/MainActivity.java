@@ -56,12 +56,13 @@ public class MainActivity extends AppCompatActivity {
     ImageButton close_button;
     BluetoothSerialService Blue = new BluetoothSerialService();
     TextView stateTextView;
-    int ID;
+    int ID = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Blue.checkBluetoothSerialService();
 
         Toolbar toolbar =(Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void dialog() {
-
+        ID = -1;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("FindDevice");
@@ -107,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         BluetoothDevice Device;
+                        if (ID == -1){
+                            Toast.makeText(MainActivity.this,
+                                    "Bluetooth device is not found", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         Device = Blue.mArraydevice.get(ID);
                         if (Device == null){
                             Toast.makeText(MainActivity.this,
@@ -230,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class BluetoothSerialService{
-        BluetoothAdapter mBluetoothAdapter;
+        BluetoothAdapter mBluetoothAdapter = null;
         private final static int REQUEST_ENABLE_BT = 1;
         final UUID sppUuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
         List<BluetoothDevice> mArraydevice = new ArrayList<BluetoothDevice>();
@@ -238,18 +244,17 @@ public class MainActivity extends AppCompatActivity {
         ConnectThread  connectTd = null;
         ConnectedThread  connectedTd = null;
 
-        public  BluetoothSerialService(){
+        public void checkBluetoothSerialService(){
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (mBluetoothAdapter == null) {
                 // Device does not support Bluetooth
                 Toast.makeText(MainActivity.this,
                         "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
                 return;
-            }else{
-                if (!mBluetoothAdapter.isEnabled()) {
+            }
+            if (!mBluetoothAdapter.isEnabled()) {
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }
             }
         }
 
