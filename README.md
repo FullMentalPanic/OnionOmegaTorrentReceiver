@@ -6,11 +6,11 @@ Hardware:
   
 Software:
 
-  python 2.7 - python lib imaplib2, PyYAML, Scrapy,
+  python 2.7 - python lib imaplib2, PyYAML, Scrapy, python-bluez
   
   C++ - Qt5
   
-  Linux tool  - Transmission-remote, omxplayer
+  Linux tool  - Transmission-remote, omxplayer, xdotool
   
   Java - android 5.1
   
