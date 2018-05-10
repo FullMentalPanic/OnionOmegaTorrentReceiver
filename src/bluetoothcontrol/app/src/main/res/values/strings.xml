@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">PiControl</string>
-    <string name= "settings_name">connect</string>>
+    <string name= "action_connect_name">connect</string>
+    <string name= "action_disconnect_name">disconnect</string>
 </resources>

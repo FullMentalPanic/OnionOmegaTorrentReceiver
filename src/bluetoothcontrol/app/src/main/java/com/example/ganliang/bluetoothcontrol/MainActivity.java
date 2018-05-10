@@ -26,14 +26,25 @@ import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static android.support.v4.app.ActivityCompat.startActivityForResult;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final int STATE_NONE = 0;
+    public static final int CONNECT_DEVICE_FAIL = 1;       // we're doing nothing
+    public static final int CONNECT_FAIL = 2;       // we're doing nothing
+    public static final int SOCKET_NOT_CREATED = 3;     //
+    public static final int STATE_CONNECTED = 4;  // now connected to a remote device
+    public static final int WRITE_IO_ERROR = 5;  // now connected to a remote device
 
     ImageButton ok_button;
     ImageButton up_button;
@@ -43,37 +54,19 @@ public class MainActivity extends AppCompatActivity {
     ImageButton stop_button;
     ImageButton pause_button;
     ImageButton close_button;
-    BluetoothAdapter mBluetoothAdapter;
-    private final static int REQUEST_ENABLE_BT = 1;
-    BluetoothDevice btDevice = null;
-    BluetoothSocket btSocket;
-    int connect_state = 0;
+    BluetoothSerialService Blue = new BluetoothSerialService();
     TextView stateTextView;
-    final UUID sppUuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    List<BluetoothDevice> mArraydevice = new ArrayList<BluetoothDevice>();
+    int ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            // Device does not support Bluetooth
-            Toast.makeText(MainActivity.this,
-                    "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
-            return;
-        }else{
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-        }
-
         Toolbar toolbar =(Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
         stateTextView = (TextView) findViewById(R.id.status);
-        stateTextView.setText("not connect");
+        stateTextView.setText("disconnect");
         add_Button();
     }
 
@@ -87,63 +80,46 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.action_settings:
+            case R.id.action_connect:
                 dialog();
+                return true;
+            case R.id.action_disconnect:
+                Blue.disconnect();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
-
     }
 
     public void dialog() {
-        List<String> mArrayAdapter = new ArrayList<String>();
 
-        Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
-        if (bondedDevices.size()>0){
-            for (BluetoothDevice device : bondedDevices) {
-                //sendLogMessage("Paired device: " + dev.getName() + " (" + dev.getAddress() + ")");
-                mArrayAdapter.add(device.getName()+ " (" + device.getAddress() + ")");
-                mArraydevice.add(device);
-            }
-        }
-        else{
-            Toast.makeText(MainActivity.this,
-                    "no pair bluetooth", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        CharSequence[] array = new CharSequence[mArrayAdapter.size()];
-        mArrayAdapter.toArray(array);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         builder.setTitle("FindDevice");
-        builder.setSingleChoiceItems(array, -1, new DialogInterface.OnClickListener() {
+
+        builder.setSingleChoiceItems(Blue.scan_pair_device(), -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                btDevice = mArraydevice.get(which);
+                ID = which;
             }
         });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        if (btDevice == null){
+                        BluetoothDevice Device;
+                        Device = Blue.mArraydevice.get(ID);
+                        if (Device == null){
                             Toast.makeText(MainActivity.this,
                                     "Bluetooth device is not found", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        Toast.makeText(MainActivity.this,
-                                "connecting", Toast.LENGTH_SHORT).show();
-                        if (connect_state == 0) {
-                            ConnectThread p = new ConnectThread(btDevice);
-                            p.start();
+                            Toast.makeText(MainActivity.this,
+                                    "connecting", Toast.LENGTH_SHORT).show();
+                            Blue.connect(Device);
                         }
-                    }
                 });
         builder.setNegativeButton("NO", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int id) {
-                btDevice = null;
-                connect_state = 0;
                 return;
             }
 
@@ -152,47 +128,6 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
-    }
-
-    public class ConnectThread extends Thread{
-
-        public ConnectThread(BluetoothDevice bTDevice){
-            BluetoothSocket tmp = null;
-            try {
-                tmp = bTDevice.createRfcommSocketToServiceRecord(sppUuid);
-            } catch (IOException e) {
-                return;
-            }
-            btSocket = tmp;
-        }
-
-        public void run() {
-            Message msg = new Message();
-            try {
-                btSocket.connect();
-            } catch(IOException e) {
-                try {
-                    btSocket.close();
-                } catch(IOException close) {
-
-                    return;
-                }
-                mHandler.sendMessage(msg);
-                return;
-            }
-            connect_state = 1;
-            mHandler.sendMessage(msg);
-        }
-
-        public boolean cancel() {
-            try {
-                connect_state = 0;
-                btSocket.close();
-            } catch(IOException e) {
-                return false;
-            }
-            return true;
-        }
     }
 
     public void add_Button(){
@@ -209,95 +144,64 @@ public class MainActivity extends AppCompatActivity {
         ok_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (connect_state == 1){
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(btSocket.getOutputStream(), "ASCII"));
-                        writer.write("o");
-                        writer.flush();
-                    } catch (IOException ex) {
-                        Toast.makeText(MainActivity.this,
-                                "Failed to send ", Toast.LENGTH_SHORT).show();
-                    }
+                byte[] buff = {'o', '\n'};
+                if(Blue.connectedTd != null){
+                    Blue.connectedTd.write(buff);
                 }
+
             }
         });
 
         up_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (connect_state == 1) {
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(btSocket.getOutputStream(), "ASCII"));
-                        writer.write("n");
-                        writer.flush();
-                    } catch (IOException ex) {
-                        Toast.makeText(MainActivity.this,
-                                "Failed to send ", Toast.LENGTH_SHORT).show();
-                    }
+                byte[] buff = {'n', '\n'};
+                if(Blue.connectedTd != null){
+                    Blue.connectedTd.write(buff);
                 }
+
             }
         });
 
         down_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (connect_state == 1) {
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(btSocket.getOutputStream(), "ASCII"));
-                        writer.write("l");
-                        writer.flush();
-                    } catch (IOException ex) {
-                        Toast.makeText(MainActivity.this,
-                                "Failed to send ", Toast.LENGTH_SHORT).show();
-                    }
+                byte[] buff = {'l', '\n'};
+                if(Blue.connectedTd != null){
+                    Blue.connectedTd.write(buff);
                 }
+
             }
         });
 
         right_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (connect_state == 1) {
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(btSocket.getOutputStream(), "ASCII"));
-                        writer.write("f");
-                        writer.flush();
-                    } catch (IOException ex) {
-                        Toast.makeText(MainActivity.this,
-                                "Failed to send ", Toast.LENGTH_SHORT).show();
-                    }
+                byte[] buff = {'f', '\n'};
+                if(Blue.connectedTd != null){
+                    Blue.connectedTd.write(buff);
                 }
+
             }
         });
 
         left_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (connect_state == 1) {
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(btSocket.getOutputStream(), "ASCII"));
-                        writer.write("b");
-                        writer.flush();
-                    } catch (IOException ex) {
-                        Toast.makeText(MainActivity.this,
-                                "Failed to send ", Toast.LENGTH_SHORT).show();
-                    }
+                byte[] buff = {'b', '\n'};
+                if(Blue.connectedTd != null){
+                    Blue.connectedTd.write(buff);
                 }
+
             }
         });
 
         pause_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (connect_state == 1) {
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(btSocket.getOutputStream(), "ASCII"));
-                        writer.write("p");
-                        writer.flush();
-                    } catch (IOException ex) {
-                        Toast.makeText(MainActivity.this,
-                                "Failed to send ", Toast.LENGTH_SHORT).show();
-                    }
+                byte[] buff = {'p', '\n'};
+                if(Blue.connectedTd != null){
+                    Blue.connectedTd.write(buff);
                 }
             }
         });
@@ -305,51 +209,239 @@ public class MainActivity extends AppCompatActivity {
         stop_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (connect_state == 1) {
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(btSocket.getOutputStream(), "ASCII"));
-                        writer.write("s");
-                        writer.flush();
-                    } catch (IOException ex) {
-                        Toast.makeText(MainActivity.this,
-                                "Failed to send ", Toast.LENGTH_SHORT).show();
-                    }
+                byte[] buff = {'s', '\n'};
+                if(Blue.connectedTd != null){
+                    Blue.connectedTd.write(buff);
                 }
             }
         });
 
         close_button.setOnClickListener(new OnClickListener() {
-
             @Override
             public void onClick(View arg0) {
-                if (connect_state == 1) {
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(btSocket.getOutputStream(), "ASCII"));
-                        writer.write("e");
-                        writer.flush();
-                    } catch (IOException ex) {
-                        Toast.makeText(MainActivity.this,
-                                "Failed to send ", Toast.LENGTH_SHORT).show();
-                    }
+                byte[] buff = {'e', '\n'};
+                if(Blue.connectedTd != null){
+                    Blue.connectedTd.write(buff);
                 }
+
             }
         });
 
     }
 
-    private Handler mHandler = new Handler() {
+    public class BluetoothSerialService{
+        BluetoothAdapter mBluetoothAdapter;
+        private final static int REQUEST_ENABLE_BT = 1;
+        final UUID sppUuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+        List<BluetoothDevice> mArraydevice = new ArrayList<BluetoothDevice>();
+        int status = STATE_CONNECTED;
+        ConnectThread  connectTd = null;
+        ConnectedThread  connectedTd = null;
 
+        public  BluetoothSerialService(){
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (mBluetoothAdapter == null) {
+                // Device does not support Bluetooth
+                Toast.makeText(MainActivity.this,
+                        "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
+                return;
+            }else{
+                if (!mBluetoothAdapter.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                }
+            }
+        }
+
+        public  CharSequence[] scan_pair_device(){
+            List<String> mArrayAdapter = new ArrayList<String>();
+            mArraydevice.clear();
+            Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
+            if (bondedDevices.size()>0){
+                for (BluetoothDevice device : bondedDevices) {
+                    mArrayAdapter.add(device.getName()+ " (" + device.getAddress() + ")");
+                    mArraydevice.add(device);
+                }
+            }
+            else{
+                Toast.makeText(MainActivity.this,
+                        "no pair bluetooth", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+            CharSequence[] array = new CharSequence[mArrayAdapter.size()];
+            mArrayAdapter.toArray(array);
+            return array;
+
+        }
+
+        public void connect(BluetoothDevice Device){
+            if(connectTd == null){
+                connectTd =  new ConnectThread(Device);
+                connectTd.start();
+
+            }
+            else{
+                    connectTd.cancel();
+                    connectTd = null;
+                    connectTd =  new ConnectThread(Device);
+                    connectTd.start();
+            }
+        }
+
+        public class ConnectThread extends Thread{
+            private final BluetoothDevice btDevice;
+            private BluetoothSocket btSocket = null;
+
+            public ConnectThread(BluetoothDevice Device){
+                btDevice = Device;
+                BluetoothSocket tmp;
+                Message msg = new Message();
+
+                try {
+                    tmp = btDevice.createRfcommSocketToServiceRecord(sppUuid);
+                } catch (IOException e) {
+                    msg.what =CONNECT_DEVICE_FAIL ;
+                    mHandler.sendMessage(msg);
+                    return;
+                }
+                btSocket = tmp;
+            }
+            public void run() {
+                Message msg = new Message();
+                try {
+                    btSocket.connect();
+                } catch(IOException e) {
+
+                    try {
+                        btSocket.close();
+                    } catch(IOException close) {
+
+                        return;
+                    }
+                    msg.what =CONNECT_FAIL ;
+                    mHandler.sendMessage(msg);
+                    return;
+                }
+
+                if (connectedTd == null){
+                    connectedTd = new ConnectedThread(btSocket);
+                }
+                else{
+                    connectedTd.cancel();
+                    connectedTd = null;
+                    connectedTd = new ConnectedThread(btSocket);
+                }
+
+            }
+
+            public boolean cancel() {
+                try {
+                    btSocket.close();
+                } catch(IOException e) {
+                    return false;
+                }
+                return true;
+            }
+        }
+        public class ConnectedThread extends Thread{
+            private BluetoothSocket mmSocket;
+            private InputStream mmInStream;
+            private OutputStream mmOutStream;
+            public ConnectedThread(BluetoothSocket socket) {
+                mmSocket = socket;
+                InputStream tmpIn = null;
+                OutputStream tmpOut = null;
+                Message msg = new Message();
+                try {
+                    tmpIn = socket.getInputStream();
+                    tmpOut = socket.getOutputStream();
+                } catch (IOException e) {
+                    msg.what =SOCKET_NOT_CREATED ;
+                    mHandler.sendMessage(msg);
+                    return;
+                }
+                mmInStream = tmpIn;
+                mmOutStream = tmpOut;
+                msg.what =STATE_CONNECTED ;
+                mHandler.sendMessage(msg);
+
+            }
+            public void write(byte[] buffer) {
+                try {
+                    mmOutStream.write(buffer);
+
+                    // Share the sent message back to the UI Activity
+                } catch (IOException e) {
+                    Message msg = new Message();
+                    msg.what =WRITE_IO_ERROR ;
+                    mHandler.sendMessage(msg);
+                }
+            }
+            public void cancel() {
+                try {
+                    mmSocket.close();
+                } catch(IOException e) {
+                    return;
+                }
+                return;
+            }
+
+        }
+
+        public void disconnect(){
+            Message msg = new Message();
+            if (connectTd != null){
+                connectTd.cancel();
+                connectTd = null;
+            }
+
+            if(connectedTd != null){
+                connectedTd.cancel();
+                connectedTd = null;
+            }
+            msg.what =STATE_NONE ;
+            mHandler.sendMessage(msg);
+        }
+    }
+
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage (Message msg) {
             super.handleMessage(msg);
-                if (connect_state == 0){
-                    stateTextView.setText("not connect");
+            switch (msg.what){
+                case CONNECT_DEVICE_FAIL:
+                    Toast.makeText(MainActivity.this,
+                            "Device connect fail", Toast.LENGTH_SHORT).show();
+                    stateTextView.setText("disconnect");
+                    break;
+                case CONNECT_FAIL:
+                    Toast.makeText(MainActivity.this,
+                            " socket connect fail", Toast.LENGTH_SHORT).show();
+                    stateTextView.setText("disconnect");
+                    break;
+                case SOCKET_NOT_CREATED:
+                    Toast.makeText(MainActivity.this,
+                            " socket not  create", Toast.LENGTH_SHORT).show();
+                    stateTextView.setText("disconnect");
+                    break;
+                case WRITE_IO_ERROR:
+                    Toast.makeText(MainActivity.this,
+                            " can not send msg", Toast.LENGTH_SHORT).show();
+                    //stateTextView.setText("not connect");
+                    break;
+                case STATE_CONNECTED:
+                    Toast.makeText(MainActivity.this,
+                            " connected", Toast.LENGTH_SHORT).show();
+                    stateTextView.setText("connected");
+                    break;
+                case STATE_NONE:
+                    Toast.makeText(MainActivity.this,
+                            " disconnected", Toast.LENGTH_SHORT).show();
+                    stateTextView.setText("disconnected");
+                default:
+                    return;
                 }
-                else{
-                    stateTextView.setText("connect");
-                }
-
-
             }
         };
 
