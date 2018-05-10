@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
                 Message msg = new Message();
 
                 try {
-                    tmp = btDevice.createRfcommSocketToServiceRecord(sppUuid);
+                    tmp = btDevice.createInsecureRfcommSocketToServiceRecord(sppUuid);//RfcommSocketToServiceRecord(sppUuid);
                 } catch (IOException e) {
                     msg.what =CONNECT_DEVICE_FAIL ;
                     mHandler.sendMessage(msg);
