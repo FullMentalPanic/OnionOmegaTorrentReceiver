@@ -87,8 +87,8 @@ def BluetoothOn(channel):
     #con.start()
 
 if __name__ == '__main__':
-    #try:
+    try:
         app = PiMonitor()
         app.run()
-    #except:
+    except:
         app.close()

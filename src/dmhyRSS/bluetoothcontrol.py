@@ -21,8 +21,14 @@ class BluetoothControl(object):
 
     def SetUpbluetoothhost(self):
         self.server_sock=BluetoothSocket(RFCOMM )
-        self.server_sock.bind(("",1))
+        self.server_sock.bind(("",PORT_ANY))
         self.server_sock.listen(1)
+        port = self.server_sock.getsockname()[1]
+        #uuid = "0000111f-0000-1000-8000-00805f9b34fb"
+        #advertise_service( self.server_sock, "Service", uuid )
+        uuid = "00001101-0000-1000-8000-00805F9B34FB"
+
+        advertise_service( self.server_sock, "AquaPiServer",service_id = uuid,service_classes = [ uuid, SERIAL_PORT_CLASS ],profiles = [ SERIAL_PORT_PROFILE ],)
 
 
     def bluetoothhost(self):
@@ -33,29 +39,29 @@ class BluetoothControl(object):
         print("Accepted connection from ", address)
         try:
             while True:
-                data = client_sock.recv(4)
+                data = self.client_sock.recv(4)
                 print "recv data %s", data
-                if data == "n":
+                if data == "n\n":
                     cl.simluate_input('Up')
-                elif data == "l":
+                elif data == "l\n":
                     cl.simluate_input('Down')
-                elif data == "o":
+                elif data == "o\n":
                     cl.simluate_input('Return')
-                elif data == "s":
+                elif data == "s\n":
                     cl.simluate_input('ctrl+q')
-                elif data == "p":
+                elif data == "p\n":
                     cl.simluate_input('ctrl+p')
-                elif data == "f":
+                elif data == "f\n":
                     cl.simluate_input('Right')
-                elif data == "b":
+                elif data == "b\n":
                     cl.simluate_input('Left')
-                elif data == "e":
+                elif data == "e\n":
                     cl.simluate_input('ctrl+e')
                 else:
                     continue
-        except IOError:            
+        except IOError:
             pass
-        else：
+        else:
             self.client_sock.close()
 
     def close(self):

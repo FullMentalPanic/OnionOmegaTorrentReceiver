@@ -2,7 +2,7 @@ email:
   imp4ssl: imap.gmail.com
   port   : 993
   account: xxxxx@gmail.com
-  password: xxxxxx
+  password: xxxxx
   white_list:
     - Gan Liang <ganliang0122@gmail.com>
 
