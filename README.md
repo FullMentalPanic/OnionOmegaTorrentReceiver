@@ -18,4 +18,4 @@ Function:
   1. download torrent from email
   2. trace torrent from web
   3. add simple gui for omxplay to display video
-  4. run flask server to control pi and manage it
+  4. run flask server to control pi and manage it
