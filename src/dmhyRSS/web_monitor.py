@@ -7,16 +7,17 @@ from threading import *
 from Queue import Queue
 
 class WebMonitor(object):
-    def __init__(self,queue = Queue()):
+    def __init__(self,queue = Queue(),stop_event = Event()):
         self.thread = Thread(target = self.run_spider_periodic, args = ())
         self.queue = queue
         self.thread.daemon = True
+        self.stop_event = stop_event
 
     def start(self):
         self.thread.start()
 
     def run_spider_periodic(self):  #every 12 h =12*60*60 s
-        while True:
+        while not self.stop_event.isSet():
             cl.Run_Spider()
             path = '/dmhy_rss_magnet.txt'
             cwd = os.getcwd()+path

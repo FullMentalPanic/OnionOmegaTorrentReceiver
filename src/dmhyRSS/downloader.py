@@ -7,9 +7,10 @@ import os
 
 
 class Downloader(object):
-    def __init__(self):
+    def __init__(self,stop_event = Event()):
         self.thread = Thread(target=self.processor)
         self.thread.daemon = True
+        self.stop_event = stop_event
 
     def start(self,):
         self.queue = Queue()
@@ -28,7 +29,7 @@ class Downloader(object):
         self.join()
 
     def processor(self):
-        while True:
+        while not self.stop_event.isSet():
             magent = self.queue.get()
             if magent is None:
                 break

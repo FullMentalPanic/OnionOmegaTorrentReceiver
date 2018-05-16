@@ -4,10 +4,10 @@ from mail_monitor import MailMonitor
 from web_monitor import WebMonitor
 from transmission_monitor import TransmissionMonitor
 from downloader import Downloader
+from pi_monitor import PiMonitor
 import yaml
 import time
 import control as cl
-
 
 class TorrentCollect(object):
     def __init__(self):
@@ -16,17 +16,19 @@ class TorrentCollect(object):
         self.mail = cfg['email']
 
     def run(self):
+        cl.open_omxplay_gui()
+        self.Pi = PiMonitor()
+        StopEvent = self.Pi.start()
         self.bt = Downloader()
-        self.magnetqueue = self.bt.start()
+        self.magnetqueue = self.bt.start(StopEvent)
         self.tran_checker = TransmissionMonitor()
-        self.tran_checker.start()
-        time.sleep(10)
+        self.tran_checker.start(StopEvent)
+        time.sleep(1)
         self.mailreceiver = MailMonitor(self.magnetqueue, self.mail['white_list'],self.mail['imp4ssl'], self.mail['port'], self.mail['account'], self.mail['password'])
-        self.mailreceiver.start()
-        time.sleep(10)
+        self.mailreceiver.start(StopEvent)
+        time.sleep(1)
         self.webreceiver = WebMonitor(self.magnetqueue)
-        self.webreceiver.start()
-        return 1
+        self.webreceiver.start(StopEvent)
 
     def close(self):
         self.webreceiver.close()

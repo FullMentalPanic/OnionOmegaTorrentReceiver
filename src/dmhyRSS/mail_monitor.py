@@ -9,11 +9,12 @@ import email
 import time
 
 class MailMonitor(object):
-    def __init__(self, queue = Queue(), white_list = [], imp4ssl=None, port=None, account=None, pwd=None):
+    def __init__(self, queue = Queue(), white_list = [], imp4ssl=None, port=None, account=None, pwd=None,stop_event = Event()):
         self.thread = Thread(target=self.listening, args =(imp4ssl,port,account,pwd))
         self.queue = queue
         self.white_list = white_list
         self.thread.daemon = True
+        self.stop_event = stop_event
 
     def login(self,imp4ssl,port,account,pwd):
         self.M = imaplib.IMAP4_SSL(imp4ssl,int(port))
@@ -28,7 +29,7 @@ class MailMonitor(object):
         self.thread.start()
 
     def listening(self,imp4ssl,port,account,pwd):
-        while True:
+        while not self.stop_event.isSet():
             try:
                 self.login(imp4ssl, port, account, pwd)
                 self.check_unread()

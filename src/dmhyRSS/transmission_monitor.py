@@ -6,15 +6,16 @@ import control as cl
 from threading import *
 
 class TransmissionMonitor(object):
-    def __init__(self):
+    def __init__(self, stop_event = Event()):
         self.thread = Thread(target = self.remove_transmission_finish_work_periodic, args = ())
         self.thread.daemon = True
+        self.stop_event = stop_event
 
     def start(self):
         self.thread.start()
 
     def remove_transmission_finish_work_periodic(self): # every 4h  = 4*60 *60
-        while True:
+        while not self.stop_event.isSet():
             check_list =  cl.List_Torrent()
             if not check_list:
                 pass
@@ -31,6 +32,7 @@ class TransmissionMonitor(object):
                 else:
                     pass
             time.sleep(4*60*60)
+        
 
     def close(self):
         self.thread.join()
