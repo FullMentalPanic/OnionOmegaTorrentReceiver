@@ -1,6 +1,5 @@
 from flask import Flask, render_template, Response,request
-
-
+from flask_socketio import SocketIO
 
 debug_server = 1
 
@@ -11,46 +10,51 @@ if debug_server == 0:
    pi_service.run()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 
-@app.route("/", methods = ['GET','POST'])
-def index():
-   if request.method == 'POST':
-      if request.form.get('Up') == 'Up':
+@app.route("/")
+def index():    
+    return render_template('index.html')
+
+@socketio.on('my event')
+def handle_my_event(arg):
+    #print (arg)
+    if arg == 'Up':
          #cl.simluate_input('Up')
-         print ("Up")
-         pass
-      elif request.form.get('Down') == 'Down':
+        print ("Up")
+        pass
+    elif arg == 'Down':
          #cl.simluate_input('Down')
-         print ("Down")
-         pass
-      elif request.form.get('Right') == 'Right':
+        print ("Down")
+        pass
+    elif arg == 'Right':
          #cl.simluate_input('Right')
-         print ("Right")
-         pass
-      elif request.form.get('Left') == 'Left':
+        print ("Right")
+        pass
+    elif arg == 'Left':
          #cl.simluate_input('Left')
-         print ("Left")
-         pass
-      elif request.form.get('OK') == 'OK':
+        print ("Left")
+        pass
+    elif arg == 'OK':
          #cl.simluate_input('Return')
-         print ("OK")
-         pass
-      elif request.form.get('Pause') == 'Pause':
+        print ("OK")
+        pass
+    elif arg == 'Pause':
          #cl.simluate_input('ctrl+p')
-         print ("Pause")
-         pass
-      elif request.form.get('Stop') == 'Stop':
-         #cl.simluate_input('ctrl+q')
-         print ("Stop")
-         pass
-      elif request.form.get('Exit') == 'Exit':
-         #cl.simluate_input('ctrl+e')
-         print ("Exit")
-         pass
-      else:
-         print ("None")
-       
-   return render_template('index.html')
+        print ("Pause")
+        pass
+    elif arg == 'Stop':
+        #cl.simluate_input('ctrl+q')
+        print ("Stop")
+        pass
+    elif arg == 'Exit':
+        #cl.simluate_input('ctrl+e')
+        print ("Exit")
+        pass
+    else:
+        print (arg)
+
                     
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    socketio.run(app, host='0.0.0.0', debug=True)

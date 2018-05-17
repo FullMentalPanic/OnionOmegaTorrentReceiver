@@ -11,16 +11,24 @@
          }
       </style>
       <div class = control>
-         <form method="post" action="/" style = "margin: auto; width: 50%;",>
-            <input type="image" src ="/static/icons/up.png" name="Up" value="Up" >
-            <input type="image" src ="/static/icons/down.png" name="Down" value="Down" >
-            <input type="image" src ="/static/icons/left.png" name="Left" value="Left" >
-            <input type="image" src ="/static/icons/right.png" name="Right" value="Right" >
-            <input type="image" src ="/static/icons/ok.png" name="OK" value="OK" >
-            <input type="image" src ="/static/icons/pause.png" name="Pause" value="Pause" >
-            <input type="image" src ="/static/icons/stop.png" name="Stop" value="Stop" >
-            <input type="image" src ="/static/icons/close.png" name="Exit" value="Exit">        
-         </form>
+            <input type="image" src ="/static/icons/up.png" name="Up" value="Up" onclick="sendMsg(this.value)">
+            <input type="image" src ="/static/icons/down.png" name="Down" value="Down" onclick="sendMsg(this.value)">
+            <input type="image" src ="/static/icons/left.png" name="Left" value="Left" onclick="sendMsg(this.value)">
+            <input type="image" src ="/static/icons/right.png" name="Right" value="Right" onclick="sendMsg(this.value)">
+            <input type="image" src ="/static/icons/ok.png" name="OK" value="OK" onclick="sendMsg(this.value)">
+            <input type="image" src ="/static/icons/pause.png" name="Pause" value="Pause" onclick="sendMsg(this.value)">
+            <input type="image" src ="/static/icons/stop.png" name="Stop" value="Stop" onclick="sendMsg(this.value)">
+            <input type="image" src ="/static/icons/close.png" name="Exit" value="Exit"onclick="sendMsg(this.value)">        
       </div>
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+      <script type="text/javascript" charset="utf-8">
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            socket.on('connect', function() {
+            socket.emit('my event', 'I\'m connected!');
+         });
+         function sendMsg(msg){
+            socket.emit('my event', msg);
+         }
+      </script>
    </body>
 </html>
