@@ -37,7 +37,7 @@ class DmhyrssPipeline(object):
             else:
                 self.queue.pop(0)
                 self.queue.append(title+'\n')
-            self.torrent_list.write(location+','+magnet+'\n')
+            self.torrent_list.write(str(item['location']) +','+str(item['magnet'])+'\n')
         else:
             pass
         return item

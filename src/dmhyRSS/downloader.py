@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #thread: download torrent from queue
 from threading import *
-from Queue import Queue
+from queue import Queue
 import control as cl
 import os
 
@@ -36,6 +36,7 @@ class Downloader(object):
             else:
                 url = magent[1]
                 location = magent[0]
+                #print (location)
                 cwd = '/mnt/volume/download/'
                 #print location
                 if location is not None:

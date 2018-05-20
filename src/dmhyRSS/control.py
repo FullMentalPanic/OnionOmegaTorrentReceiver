@@ -4,6 +4,8 @@ import subprocess
 import os
 
 def Add_Torrent(url,location):
+    print (location)
+    print (url)
     transmission_add_torrent = ['/usr/bin/transmission-remote', "-n", "transmission:transmission",]
 
     transmission_add_torrent.append("--add")
@@ -16,8 +18,10 @@ def List_Torrent():
     transmission_list = ["/usr/bin/transmission-remote -n transmission:transmission -l"]
     temp, err = subprocess.Popen(transmission_list, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True).communicate()
     var = []
-    print temp
-    for line in temp.split('\n'):
+    temp = str(temp)
+    #print (temp)
+    for line in temp.split('\\n'):
+        print (line)
         var.append(line)
     var.pop(-1)
     var.pop(-1)
@@ -47,6 +51,7 @@ def Romove_Torrent(id):
 def Check_GPU_tempture():
     get_GPU_temp = ["/opt/vc/bin/vcgencmd measure_temp"]
     temp, err = subprocess.Popen(get_GPU_temp, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True).communicate()
+    temp = str(temp)
     return (float(temp[temp.index('=') + 1:temp.rindex("'")]))
 
 def Check_CPU_tempture():
@@ -60,11 +65,14 @@ def Check_CPU_tempture():
 def check_HDD_spare():
     disk_usage = ["df"]
     tmp, err = subprocess.Popen(disk_usage, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True).communicate()
-    for line in  tmp.split('\n'):
+    tmp = str(tmp)
+    #print (tmp)
+    for line in  tmp.split('\\n'):
         if line.find('/dev/sda1') != -1:
             sda = line.split()
             spare = (float(sda[3]))/1024/1024
             return spare
+    #return 99.0
 
 '''
 0x40001
@@ -106,3 +114,7 @@ def Bluetooth_Discoverable():
     subprocess.call(['sudo','hciconfig','hci0','up'])
     #subprocess.call(['sudo','hciconfig','hci0','sspmode','1'])
     subprocess.call(['sudo','hciconfig','hci0','piscan'])
+
+def Set_xdotool_env():
+    os.environ["DISPLAY"] = ":0"
+    os.environ["XAUTHORITY"] = "/home/pi/.Xauthority"

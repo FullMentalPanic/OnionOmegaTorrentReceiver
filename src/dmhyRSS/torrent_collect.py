@@ -16,7 +16,7 @@ class TorrentCollect(object):
         self.mail = cfg['email']
 
     def run(self):
-        cl.open_omxplay_gui()
+        #cl.open_omxplay_gui()
         self.Pi = PiMonitor()
         StopEvent = self.Pi.start()
         self.bt = Downloader(StopEvent)

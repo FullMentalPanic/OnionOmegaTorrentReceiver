@@ -4,7 +4,6 @@ import scrapy
 from dmhyRSS.items import *
 import yaml
 import re
-from Queue import Queue
 
 class dmhyRSSspider(scrapy.Spider):
     name = "dmhy_rss"

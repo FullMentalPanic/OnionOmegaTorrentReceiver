@@ -4,7 +4,7 @@ import time
 import os
 import control as cl
 from threading import *
-from Queue import Queue
+from queue import Queue
 
 class WebMonitor(object):
     def __init__(self,queue = Queue(),stop_event = Event()):
@@ -24,6 +24,7 @@ class WebMonitor(object):
             if os.path.isfile(cwd):
                 f = open(cwd)
                 for magnet in f:
+                    #magnet = magnet.decode('utf-8')
                     tmp = magnet.split(',')
                     self.queue.put(tmp)
                 f.close()

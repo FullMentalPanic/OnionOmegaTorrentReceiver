@@ -14,16 +14,16 @@ class PiMonitor(object):
         GPIO.setup(3, GPIO.IN, pull_up_down = GPIO.PUD_UP) # shutdown button
         GPIO.setup(11,GPIO.OUT, initial = 0) # Fan control
         GPIO.add_event_detect(3, GPIO.FALLING, callback = Shutdown, bouncetime = 2000)
-        GPIO.add_event_detect(15, GPIO.FALLING, callback = BluetoothOn, bouncetime = 2000)
+        #GPIO.add_event_detect(15, GPIO.FALLING, callback = BluetoothOn, bouncetime = 2000)
         self.thread = Thread(target=self.moniter)
         self.thread.daemon = True
-        self.thread_stop_event = Event() 
+        self.thread_stop_event = Event()
 
     def start(self):
         self.thread_stop_event.clear()
         self.thread.start()
         return self.thread_stop_event
-        
+
     def moniter(self):
         while True: # every 1m =30 s
             self.check_harddisk_spare()
@@ -33,7 +33,7 @@ class PiMonitor(object):
     def check_harddisk_spare(self):
         spare = cl.check_HDD_spare()
         if debug:
-            print spare
+            print (spare)
         if spare < 1.0:
             self.thread_stop_event.set()
         else:
@@ -42,15 +42,15 @@ class PiMonitor(object):
     def check_HDMI_status(self):
         status = cl.check_HDMI_status()
         if debug:
-            print status
+            print (status)
 
     def control_CPU_GPU_tempture(self):
         CPU_temp = cl.Check_CPU_tempture()
         GPU_temp = cl.Check_GPU_tempture()
 
         if debug:
-            print CPU_temp
-            print GPU_temp
+            print (CPU_temp)
+            print (GPU_temp)
 
         if CPU_temp > 50.0 or GPU_temp >50.0:
             GPIO.output(11,1)

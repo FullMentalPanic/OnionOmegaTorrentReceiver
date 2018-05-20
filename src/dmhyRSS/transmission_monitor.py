@@ -22,6 +22,7 @@ class TransmissionMonitor(object):
             else:
                 ID ='-t'
                 for item in check_list:
+                    #print (temp)
                     temp = item.split()
                     if temp[4] == 'Done':
                         ID = ID+temp[0]+','
@@ -32,7 +33,7 @@ class TransmissionMonitor(object):
                 else:
                     pass
             time.sleep(4*60*60)
-        
+
 
     def close(self):
         self.thread.join()

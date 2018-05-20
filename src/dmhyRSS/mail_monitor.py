@@ -4,7 +4,7 @@
 
 import imaplib
 from threading import *
-from Queue import Queue
+from queue import Queue
 import email
 import time
 
@@ -35,21 +35,25 @@ class MailMonitor(object):
                 self.check_unread()
                 self.logout()
             except:
-                print "can not read email"
+                print ("can not read email")
             time.sleep(15 *60)
 
     def extract_magnet(self, msg_num):
         typ, data = self.M.fetch(msg_num, '(RFC822)')
         body = None
         subject = None
+        #print (data)
         for response_part in data:
             if isinstance(response_part,tuple):
-                msg = email.message_from_string(response_part[1])
-                subject, encoding = email.Header.decode_header(msg['subject'])[0]
+                #print (response_part)
+                msg = email.message_from_string(response_part[1].decode('utf-8'))
+                #print (msg)
+                subject, encoding = email.header.decode_header(msg['subject'])[0]
                 #subject = msg['subject']
-                #print subject
+                subject = subject.decode('utf-8')
+                #print (subject)
                 if msg['from'] not in self.white_list:
-                    print msg['from']
+                    print (msg['from'])
                     break
                 if msg.is_multipart():
                     for part in msg.walk():
@@ -60,6 +64,7 @@ class MailMonitor(object):
                             break
                 else:
                     body = msg.get_payload()
+                #print (body)
                 break
 
         return [subject,body]
@@ -70,7 +75,7 @@ class MailMonitor(object):
         if unread_msg_nums is not None:
             for msg_num in unread_msg_nums:
                 magnet= self.extract_magnet(msg_num)
-                if magnet is not None:
+                if magnet[1] is not None:
                     self.queue.put(magnet)
                 else:
                     continue
