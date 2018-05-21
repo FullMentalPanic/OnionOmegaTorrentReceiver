@@ -6,16 +6,19 @@ Hardware:
   
 Software:
 
-  python 2.7 - python lib imaplib2, PyYAML, Scrapy, Flask
-  
-  C++ - Qt5
-  
-  Linux tool  - Transmission-remote, omxplayer, xdotool
-  
- 
-Function:
-  
-  1. download torrent from email
-  2. trace torrent from web
-  3. add simple gui for omxplay to display video
-  4. run flask server to control pi and manage it
+ 1. Simple omxplayer GUI application
+
+    C++ - Qt5 omxplayer
+
+ 2  Server in Pi
+
+    flask + gunicorn + nginx + supervisor
+
+ 3 - Pi control and Torrent download function
+    
+    python 3
+
+    thread 1 collect torrent from email
+    thread 2 trace torrent from web
+    thread 3 add torrent in transmission
+    thread 4 monitor hdd spare and pi temp
