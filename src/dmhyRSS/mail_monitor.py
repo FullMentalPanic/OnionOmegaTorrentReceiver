@@ -66,6 +66,7 @@ class MailMonitor(object):
                     body = msg.get_payload()
                 #print (body)
                 break
+                
 
         return [subject,body]
 

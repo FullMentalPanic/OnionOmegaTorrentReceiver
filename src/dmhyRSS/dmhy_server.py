@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Response,request
 from flask_socketio import SocketIO
+import os
 
 debug_server = 0
 
@@ -52,6 +53,7 @@ def handle_my_event(arg):
     elif arg == 'Exit':
         cl.simluate_input('ctrl+e')
         #print ("Exit")
+        os.system("sudo shutdown -h now")
         pass
     else:
         print (arg)

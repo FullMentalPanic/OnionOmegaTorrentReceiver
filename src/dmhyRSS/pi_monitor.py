@@ -12,7 +12,7 @@ class PiMonitor(object):
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(3, GPIO.IN, pull_up_down = GPIO.PUD_UP) # shutdown button
-        GPIO.setup(11,GPIO.OUT, initial = 0) # Fan control
+        GPIO.setup(26,GPIO.OUT, initial = 1) # Fan control
         GPIO.add_event_detect(3, GPIO.FALLING, callback = Shutdown, bouncetime = 2000)
         #GPIO.add_event_detect(15, GPIO.FALLING, callback = BluetoothOn, bouncetime = 2000)
         self.thread = Thread(target=self.moniter)
@@ -53,9 +53,9 @@ class PiMonitor(object):
             print (GPU_temp)
 
         if CPU_temp > 50.0 or GPU_temp >50.0:
-            GPIO.output(11,1)
+            GPIO.output(26,0)
         elif CPU_temp < 45.0 and GPU_temp < 45.0:
-            GPIO.output(11,0)
+            GPIO.output(26,1)
         else:
             pass
     def close(self):
