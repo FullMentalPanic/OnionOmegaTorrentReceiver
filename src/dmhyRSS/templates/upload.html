@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+        <title>Config</title>
+        <style>
+            body {
+                touch-action: manipulation;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row clearfix">
+                <div class="col-md-4 column">
+                    <h2>
+                        Transmission
+                    </h2>
+                    <p>                       
+                        Config file name should be "config.yml"
+                        here is format example:
+
+                        email:
+                            imp4ssl: imap.gmail.com
+                            port   : 993
+                            account: xxxxx@gmail.com
+                            password: xxxxx
+                            white_list:
+                            - Gan Liang <xxxxx@gmail.com>
+                        
+                        transmission:
+                            dowload_dir: /mnt/volume/download/
+                            account: transmission
+                            password: transmission
+                        
+                        re_spider:
+                            dmhy_rss:
+                            - .+極影字幕社.+女神異聞錄5.+\d{1,}.+BIG5.+720P.+MP4
+                            - .+豌豆字幕组.+风之圣殿字幕组.+齐木楠雄的灾难.+第二季.+\d{1,}.+简体.+720P.+MP4
+                            - .+(?=.*豌豆字幕組&風之聖殿字幕組)(?=.*魔卡少女櫻)(?=.*繁體)(?=.*720P)(?=.*MP4)
+                            location:
+                            - 女神異聞錄5
+                            - 齐木楠雄的灾难
+                            - 魔卡少女樱透明卡篇
+
+                        <form method=post enctype=multipart/form-data>
+                            <input type=file name=file>
+                            <input type=submit value=Upload>
+                        </form>
+                        <a class="btn btn-primary btn-lg" href="http://192.168.0.158:8000" role="button">Back</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    </body>
+</html>
